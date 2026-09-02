@@ -318,7 +318,10 @@ class DeviceNameCreator:
         # Find existing EV Smart Charging devices
         ev_devices = []
         for device in devices:
-            for item in devices[device].identifiers:
+            if isinstance(device, str):
+                # Up to HA 2026.8
+                device = device_registry.async_get(device)
+            for item in device.identifiers:
                 if item[0] == DOMAIN:
                     ev_devices.append(device)
         # If this is the first device. just return NAME
@@ -327,7 +330,7 @@ class DeviceNameCreator:
         # Find the highest number at the end of the name
         higest = 1
         for device in ev_devices:
-            device_name: str = devices[device].name
+            device_name = device.name
             if device_name == NAME:
                 pass
             else:
